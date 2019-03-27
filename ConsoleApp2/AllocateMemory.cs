@@ -9,7 +9,7 @@ namespace MiddleProgrammingHomeWorks
     [MemoryDiagnoser]
     public class AllocateMemory
     {
-        // Allocates series 2GB streams - max CLR object size (?).
+        // Allocates series 2GB streams - maximum index in any single dimension is 2,147,483,591 for byte arrays.
         [Benchmark]
         public void AllocateMemoryFillingStreams()
         {
@@ -44,21 +44,23 @@ namespace MiddleProgrammingHomeWorks
             return (stream, stream.Length);
         }
 
-        // Have seen 28GB allocated in debugger disgnostics window when everything crashed.
+        // Have seen ~28GB allocated.
         [Benchmark]
         public void AllocateMemoryGrowingLinkedList()
         {
+            var memoryBefore = GC.GetTotalMemory(false);
             LinkedList<byte[]> byteLinkedList = new LinkedList<byte[]>();
 
             try
             {
                 while (true)
                 {
-                    byteLinkedList.AddLast(new byte[1024 * 100]);
+                    byteLinkedList.AddLast(new byte[1024 * 1024]); // 1MB
                 }
             }
             catch (OutOfMemoryException)
             {
+                Console.WriteLine($"Total allocated memory: {(GC.GetTotalMemory(false) - memoryBefore) / (1024.0 * 1024.0)} MB.");
             }
         }
     }

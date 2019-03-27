@@ -7,7 +7,7 @@ namespace MiddleProgrammingHomeWorks
         static void Main(string[] args)
         {
             //BenchmarkRunner.Run<Task1_AllocateTotalMemory>();
-
+            //new AllocateMemory().AllocateMemoryFillingStreams();
             new AllocateMemory().AllocateMemoryGrowingLinkedList();
         }
     }
