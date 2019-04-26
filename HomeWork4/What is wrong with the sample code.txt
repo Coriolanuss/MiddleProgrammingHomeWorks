@@ -1,0 +1,3 @@
+Thread2 tries to remove "a" if it exists, long after the Thread1 finished.
+But it fails to do so, because Thread2 checkes "a" against an old snapshot of wrapper.
+At the moment of capturing tran2, "a" was absent in the wrapper.
