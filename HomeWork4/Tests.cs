@@ -105,5 +105,43 @@ namespace HomeWork4
             Assert.Catch<InvalidOperationException>(() => transaction.TryGet(1, out _));
             Assert.Catch<InvalidOperationException>(() => transaction.Remove(1));
         }
+
+        [Test]
+        public void ShouldHandleSubsequentTransactions()
+        {
+            TransactionalHashTable<int, string> transactHashTable = new TransactionalHashTable<int, string>(
+                (1, "lorem"), (2, "ipsum"), (3, "dolor "));
+
+            using (Transaction<int, string> firstTransaction = transactHashTable.BeginTransaction())
+            {
+                using (Transaction<int, string> secondTransaction = transactHashTable.BeginTransaction())
+                {
+                    secondTransaction.Remove(2);
+                    secondTransaction.Remove(3);
+                }
+                Assert.True(transactHashTable.Count == 1);
+
+                firstTransaction.Add(2, "ipsum");
+                firstTransaction.Add(3, "dolor ");
+            }
+            Assert.True(transactHashTable.Count == 3);
+        }
+
+        [Test]
+        public void ShouldReserChangesWhenOpposite()
+        {
+            TransactionalHashTable<int, string> transactHashTable = new TransactionalHashTable<int, string>(
+                (1, "lorem"), (2, "ipsum"), (3, "dolor "));
+
+            using (Transaction<int, string> transaction = transactHashTable.BeginTransaction())
+            {
+                transaction.Remove(2);
+                Assert.True(transaction.ChangesCount == 1);
+
+                transaction.Add(2, "ipsum");
+                Assert.True(transaction.ChangesCount == 0);
+            }
+            Assert.True(transactHashTable.Count == 3);
+        }
     }
 }

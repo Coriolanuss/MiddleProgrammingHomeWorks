@@ -19,13 +19,13 @@ namespace HomeWork4
         {
             ThrowIfFinished();
 
-            if (owner.TryGet(key, out _) || positiveDelta.ContainsKey(key))
-            {
-                throw new ArgumentException("An item with the same key has already been added.");
-            }
-            else if (negativeDelta.ContainsKey(key))
+            if (negativeDelta.ContainsKey(key))
             {
                 negativeDelta.Remove(key);
+            }
+            else if (owner.TryGet(key, out _) || positiveDelta.ContainsKey(key))
+            {
+                throw new ArgumentException("An item with the same key has already been added.");
             }
             else
             {
